@@ -1,0 +1,36 @@
+name: salon-template-local
+
+services:
+  app:
+    build: .
+    image: salon-template-app:local
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Локальный запуск: HTTP на localhost, без доверия к прокси.
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: "3000"
+      APP_ORIGIN: http://localhost:3000
+      COOKIE_SECURE: "false"
+      TRUST_PROXY: "false"
+      PUBLIC_DIR: /app/public
+      MIGRATIONS_DIR: /app/migrations
+      DATA_DIR: /app/data
+      BACKUP_DIR: /app/data/backups
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - salon-template-data:/app/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    stop_grace_period: 15s
+
+volumes:
+  salon-template-data:

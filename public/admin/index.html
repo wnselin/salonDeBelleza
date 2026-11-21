@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Заявки — Ваш салон</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="login" id="loginView" hidden>
+    <form class="login__card" id="loginForm" autocomplete="on">
+      <div class="brand">
+        <span class="brand__script">Ваш салон</span>
+        <span class="brand__sub">панель заявок</span>
+      </div>
+      <h1 class="login__title">Вход</h1>
+      <p class="login__hint">Доступ только для администратора салона.</p>
+
+      <label class="field">
+        <span class="field__label">Логин</span>
+        <input class="field__input" name="username" type="text" autocomplete="username" required>
+      </label>
+      <label class="field">
+        <span class="field__label">Пароль</span>
+        <input class="field__input" name="password" type="password" autocomplete="current-password" required>
+      </label>
+
+      <p class="login__error" id="loginError" role="alert" hidden></p>
+
+      <button class="btn btn--primary btn--block" type="submit" id="loginSubmit">Войти</button>
+      <p class="login__note">Защищённая сессия. Не входите с чужих устройств.</p>
+    </form>
+  </div>
+
+  <div class="app" id="appView" hidden>
+    <header class="topbar">
+      <div class="topbar__inner">
+        <div class="brand brand--small">
+          <span class="brand__script">Ваш салон</span>
+          <span class="brand__sub">заявки</span>
+        </div>
+
+        <div class="topbar__status">
+          <span class="live" id="liveStatus" data-state="connecting" aria-live="polite">
+            <span class="live__dot" aria-hidden="true"></span>
+            <span class="live__text">Подключение…</span>
+          </span>
+          <span class="counter" id="newCounter" title="Новые заявки">0 новых</span>
+        </div>
+
+        <div class="topbar__user">
+          <span class="topbar__username" id="username"></span>
+          <button class="btn btn--ghost btn--sm" type="button" id="logoutButton">Выйти</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="toolbar" aria-label="Фильтры">
+        <label class="search">
+          <span class="search__icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+              <path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input class="search__input" id="searchInput" type="search" placeholder="Имя или телефон" autocomplete="off">
+        </label>
+
+        <label class="select-wrap">
+          <span class="visually-hidden">Статус</span>
+          <select id="statusFilter" class="field__input">
+            <option value="">Все статусы</option>
+            <option value="new">Новые</option>
+            <option value="contacted">Созвонились</option>
+            <option value="confirmed">Подтверждены</option>
+            <option value="completed">Выполнены</option>
+            <option value="cancelled">Отменены</option>
+          </select>
+        </label>
+
+        <button class="btn btn--ghost btn--sm" type="button" id="refreshButton">Обновить</button>
+      </section>
+
+      <p class="summary" id="summary" aria-live="polite"></p>
+
+      <section class="list" id="list" aria-label="Заявки"></section>
+
+      <p class="empty" id="emptyState" hidden>
+        <strong>Заявок пока нет</strong>
+        <span>Новые записи появятся здесь автоматически.</span>
+      </p>
+
+      <div class="more-wrap">
+        <button class="btn btn--ghost btn--sm" type="button" id="loadMore" hidden>Показать ещё</button>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <template id="bookingTemplate">
+    <article class="card" data-status="new">
+      <div class="card__head">
+        <div class="card__identity">
+          <h2 class="card__name"></h2>
+          <span class="badge" data-status="new"></span>
+        </div>
+        <time class="card__created"></time>
+      </div>
+
+      <div class="card__contact">
+        <a class="card__phone" href="#"></a>
+        <button class="icon-btn" type="button" data-action="copy" title="Скопировать номер">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M15 5.5A2.5 2.5 0 0 0 12.5 3H6a3 3 0 0 0-3 3v6.5A2.5 2.5 0 0 0 5.5 15" stroke="currentColor" stroke-width="1.7"/>
+          </svg>
+          <span class="visually-hidden">Скопировать номер</span>
+        </button>
+      </div>
+
+      <dl class="card__meta">
+        <div><dt>Услуга</dt><dd class="card__service"></dd></div>
+        <div><dt>Желаемая дата</dt><dd class="card__date"></dd></div>
+      </dl>
+
+      <p class="card__comment" hidden></p>
+
+      <div class="card__actions">
+        <label class="card__status">
+          <span class="visually-hidden">Статус заявки</span>
+          <select class="field__input field__input--compact" data-action="status">
+            <option value="new">Новая</option>
+            <option value="contacted">Созвонились</option>
+            <option value="confirmed">Подтверждена</option>
+            <option value="completed">Выполнена</option>
+            <option value="cancelled">Отменена</option>
+          </select>
+        </label>
+        <button class="btn btn--danger btn--sm" type="button" data-action="delete">Удалить</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="admin.js"></script>
+</body>
+</html>

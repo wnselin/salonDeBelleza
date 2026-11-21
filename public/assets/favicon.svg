@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ваш салон">
+  <rect width="64" height="64" rx="14" fill="#0a0a0b"/>
+  <path d="M23 19c8-6 20-4 20 6 0 6-6 8-11 8 6 0 12 3 12 9 0 9-13 12-21 5"
+        fill="none" stroke="#e01b2f" stroke-width="7"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

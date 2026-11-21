@@ -1,0 +1,10 @@
+process.env.NODE_ENV = 'test';
+process.env.APP_ORIGIN = 'http://localhost:3000';
+process.env.COOKIE_SECURE = 'false';
+process.env.TRUST_PROXY = 'false';
+process.env.RATE_LIMIT_DISABLED = 'false';
+process.env.LOG_LEVEL = 'silent';
+process.env.CONSENT_VERSION = 'test-2026-11-04';
+process.env.BOOKING_RETENTION_DAYS = '90';
+process.env.BACKUP_RETENTION_DAYS = '7';
+process.env.BACKUP_KEY = 'a'.repeat(64);

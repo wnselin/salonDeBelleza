@@ -1,0 +1,30 @@
+# Dependencies and build artefacts
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Local runtime data (SQLite + backups)
+data/
+backups/
+secrets/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# Local-only documents explicitly requested to stay out of git
+TODO-LEGAL.md
+server-requirements.xlsx
+SALES-PITCH.md
+CONTRACT-REQUIREMENTS.md
+docs/legal/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/

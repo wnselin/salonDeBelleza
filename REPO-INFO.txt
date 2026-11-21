@@ -1,0 +1,13 @@
+https://github.com/wnselin/salonDeBelleza
+
+HTML
+CSS
+JavaScript
+Node.js
+TypeScript
+Fastify
+SQLite
+Docker
+Docker Compose
+Caddy
+Vitest

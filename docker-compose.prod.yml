@@ -1,0 +1,69 @@
+name: salon-template
+
+services:
+  app:
+    build: .
+    image: salon-template-app:prod
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      PUBLIC_DIR: /app/public
+      MIGRATIONS_DIR: /app/migrations
+      DATA_DIR: /app/data
+      BACKUP_DIR: /app/data/backups
+      BACKUP_KEY_FILE: /run/secrets/backup_key
+    volumes:
+      - salon-template-data:/app/data
+    secrets:
+      - backup_key
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    stop_grace_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env.production}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  salon-template-data:
+  caddy-data:
+  caddy-config:
+
+secrets:
+  backup_key:
+    # Создаётся вручную на сервере: openssl rand -hex 32 > secrets/backup_key
+    file: ./secrets/backup_key
